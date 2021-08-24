@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import EditExercise from './EditExercise';
 import Exercise from './Exercise';
+import axios from 'axios';
 
 export const ExerciseContext = React.createContext();
 
@@ -19,7 +20,12 @@ export default function ExercisesList() {
     )
 
     useEffect(( () => {
-        return fetch("/exercises").then( res => {
+        return fetch("/exercises", {
+            headers : { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+        }).then( res => {
             if(res.ok) {
                 return res.json()
             }
@@ -35,8 +41,10 @@ export default function ExercisesList() {
           category: '',
           description: "",
         }
+        // create new entry in the db here, update it in the edit section
+        axios.post('http://localhost:3001/exercise', newExercise)
     
-        setExercises([...exercises, newExercise])
+        //setExercises([...exercises, newExercise])
         console.log(exercises)
         setSelectedExerciseId(newExercise.id)
     }
@@ -76,7 +84,7 @@ export default function ExercisesList() {
                         <div key={exercise.id}>
                             {
                                 exercise.id === selectedExerciseId
-                                    ? <EditExercise exercise={exercise} />
+                                    ? <EditExercise exercise={exercise}/>
                                     : <Exercise exercise={exercise} />
                             }
                         </div>

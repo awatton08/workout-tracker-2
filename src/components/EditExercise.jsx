@@ -1,53 +1,55 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { ExerciseContext } from './ExercisesList'
+import axios from "axios"
+import { useForm } from "react-hook-form";
+
 
 
 export default function EditExercise(props) {
     const {handleExerciseDelete, handleExerciseChange, handleExerciseSelect} = useContext(ExerciseContext)
 
-    
-
-    const handleChange = (changes) => {
-        handleExerciseChange(exercise.id, { ...exercise, ...changes })
-    }
-
     const {exercise} = props
 
+    // const [input, setInput] = useState({
+    //     id: "taco",//exercise.id,
+    //     name: "taco",//exercise.name,
+    //     category: "taco",//exercise.category,
+    //     description: "taco"//exercise.description
+    // })
+    
+    const { register, handleSubmit } = useForm({
+        defaultValues: {
+          name: exercise.name,
+          category: exercise.category,
+          description: exercise.description
+        }
+    })
+
+    const onSubmit = (input) => {
+        //input.preventDefault()
+        const updatedExercise = {
+            id: exercise.id,
+            name: input.name,
+            category: input.category,
+            description: input.description
+        }
+        console.log(updatedExercise)
+        
+        axios.put('http://localhost:3001/exercise', updatedExercise)
+        handleExerciseSelect(null)
+        
+    }
+
     return (
-        <div className="exercise-card">
-            <label htmlFor="exercise-name">Name: </label>
-            <input id="exercise-name" value={exercise.name} onInput={ e => handleChange({ name: e.target.value })}/>
-            {/* <input id="exercise-category" value={exercise.category} onInput={ e => handleChange({ category: e.target.value })}/> */}
-            <select id="exercise-category" value={exercise.category} onChange={ e => handleChange({ category: e.target.value })}>
-                <option value="Any">Any</option>
-                <option value="Push">Push</option>
-                <option value="Pull">Pull</option>
-                <option value="Legs">Legs</option>
-            </select>
-            <label htmlFor="exercise-description">Description</label>
-            <textarea id="exercise-description" value={exercise.description} onInput={ e => handleChange({ description: e.target.value })} type="text"/>
-            <button onClick={() => handleExerciseSelect(null)}>Done</button>
-            <button onClick={ () => handleExerciseDelete(exercise.id)}>DELETE</button>  
-            <hr/>
+        <div>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <input placeholder="Exercise Name" {...register("name")} />
+                <input placeholder="Category" {...register("category")} />
+                <textarea placeholder="Description" {...register("description")} />
+
+                <button type="submit">Submit</button>
+            </form>        
+            <button onClick={handleExerciseDelete}>DELETE</button>
         </div>
     )
-
-    // const { exercise, handleExerciseEditSelect, handleExerciseChange, handleExerciseDelete} = props;
-    
-    // const handleChange = (changes) => {
-    //     handleExerciseChange(exercise.id, { ...exercise, ...changes })
-    // }
-
-    // return (
-    //     <div className="exercise-card">
-    //         <label htmlFor="exercise-name">Name: </label>
-    //         <input id="exercise-name" value={exercise.name} onInput={ e => handleChange({ name: e.target.value })}/>
-    //         <button onClick={() => handleExerciseEditSelect(null)}>Done</button>
-    //         <button onClick={ () => handleExerciseDelete(exercise.id)}>DELETE</button>
-    //         <hr/>
-    //         <label htmlFor="exercise-description">Description</label>
-    //         <textarea id="exercise-description" value={exercise.description} onInput={ e => handleChange({ description: e.target.value })} type="text"/>
-    //         <hr/>
-    //     </div>
-    // )
 }
