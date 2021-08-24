@@ -1,11 +1,8 @@
 import React, { useContext } from 'react'
-import { ExerciseContext } from './ExercisesList'
 
 export default function Exercise(props) {
 
-    const { exercise } = props
-    const { handleExerciseSelect } = useContext(ExerciseContext)
-
+    const { exercise, handleExerciseSelect } = props
 
     return (
         <div>
